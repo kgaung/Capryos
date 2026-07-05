@@ -1,5 +1,6 @@
 import type { Config } from "@netlify/functions";
 import { and, desc, eq, inArray, ne, sql } from "drizzle-orm";
+import { createHmac, timingSafeEqual } from "node:crypto";
 import { db } from "../../db/index.js";
 import { blogPosts, contentSuggestions, subscribers } from "../../db/schema.js";
 
@@ -42,17 +43,55 @@ const toSuggestion = (row: typeof contentSuggestions.$inferSelect) => ({
 });
 
 const cookieName = "capryos_admin";
-const sessionValue = () => process.env.ADMIN_SESSION_SECRET || process.env.NETLIFY_SITE_ID || "capryos-local-admin";
+const sessionSecret = () => process.env.ADMIN_SESSION_SECRET || process.env.ADMIN_PASSWORD || process.env.NETLIFY_SITE_ID || "capryos-local-admin";
 
-const isAuthed = (req: Request) => req.headers.get("cookie")?.includes(`${cookieName}=${encodeURIComponent(sessionValue())}`);
+const signSession = (issuedAt = Date.now()) => {
+  const payload = String(issuedAt);
+  const signature = createHmac("sha256", sessionSecret()).update(payload).digest("base64url");
+  return `${payload}.${signature}`;
+};
+
+const verifySession = (value: string | null) => {
+  if (!value) return false;
+  const [issuedAt, signature] = value.split(".");
+  if (!issuedAt || !signature) return false;
+  const timestamp = Number(issuedAt);
+  if (!Number.isFinite(timestamp) || Date.now() - timestamp > 7 * 24 * 60 * 60 * 1000) return false;
+
+  const expected = createHmac("sha256", sessionSecret()).update(issuedAt).digest("base64url");
+  const signatureBuffer = Buffer.from(signature);
+  const expectedBuffer = Buffer.from(expected);
+  return signatureBuffer.length === expectedBuffer.length && timingSafeEqual(signatureBuffer, expectedBuffer);
+};
+
+const getCookie = (req: Request, name: string) => {
+  const cookie = req.headers.get("cookie") ?? "";
+  return cookie
+    .split(";")
+    .map((part) => part.trim())
+    .find((part) => part.startsWith(`${name}=`))
+    ?.slice(name.length + 1) ?? null;
+};
+
+const isAuthed = (req: Request) => verifySession(getCookie(req, cookieName));
 
 const requireAdmin = (req: Request) => {
   if (!isAuthed(req)) return json({ error: { message: "Unauthorized" } }, { status: 401 });
   return null;
 };
 
+const requireSameOrigin = (req: Request) => {
+  const origin = req.headers.get("origin");
+  if (!origin) return null;
+  const requestOrigin = new URL(req.url).origin;
+  if (origin !== requestOrigin) return json({ error: { message: "Invalid request origin" } }, { status: 403 });
+  return null;
+};
+
 const getResource = (req: Request) => new URL(req.url).pathname.replace(/^\/api\/?/, "").split("/")[0];
 const dateOrNull = (value: unknown) => (typeof value === "string" && value ? new Date(value) : null);
+const cleanLimit = (value: string | null) => Math.min(Math.max(Number(value || "100") || 100, 1), 100);
+const secureCookie = (req: Request) => new URL(req.url).protocol === "https:" ? "; Secure" : "";
 
 export default async (req: Request) => {
   try {
@@ -65,6 +104,8 @@ export default async (req: Request) => {
         return json({ ok: true }, { headers: { "Set-Cookie": `${cookieName}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0` } });
       }
       if (req.method === "POST") {
+        const badOrigin = requireSameOrigin(req);
+        if (badOrigin) return badOrigin;
         const { email, password } = await req.json();
         const adminEmail = process.env.ADMIN_EMAIL;
         const adminPassword = process.env.ADMIN_PASSWORD;
@@ -76,7 +117,7 @@ export default async (req: Request) => {
         }
         return json(
           { user: { email } },
-          { headers: { "Set-Cookie": `${cookieName}=${encodeURIComponent(sessionValue())}; Path=/; HttpOnly; SameSite=Lax; Secure; Max-Age=604800` } },
+          { headers: { "Set-Cookie": `${cookieName}=${encodeURIComponent(signSession())}; Path=/; HttpOnly; SameSite=Lax${secureCookie(req)}; Max-Age=604800` } },
         );
       }
     }
@@ -87,12 +128,16 @@ export default async (req: Request) => {
         const slug = url.searchParams.get("slug");
         const status = url.searchParams.get("status");
         const notId = url.searchParams.get("not_id");
-        const limit = Number(url.searchParams.get("limit") || "100");
+        const limit = cleanLimit(url.searchParams.get("limit"));
         const tagList = url.searchParams.get("overlaps_tags")?.split(",").filter(Boolean) ?? [];
+        const adminRead = isAuthed(req);
+        if (status !== "published" && !adminRead) {
+          return json({ error: { message: "Unauthorized" } }, { status: 401 });
+        }
         const filters = [
           id ? eq(blogPosts.id, id) : undefined,
           slug ? eq(blogPosts.slug, slug) : undefined,
-          status ? eq(blogPosts.status, status) : undefined,
+          status ? eq(blogPosts.status, status) : adminRead ? undefined : eq(blogPosts.status, "published"),
           notId ? ne(blogPosts.id, notId) : undefined,
           tagList.length ? sql`${blogPosts.tags} ?| array[${sql.join(tagList.map((tag) => sql`${tag}`), sql`, `)}]` : undefined,
         ].filter(Boolean);
@@ -106,6 +151,8 @@ export default async (req: Request) => {
       }
 
       if (req.method === "POST") {
+        const badOrigin = requireSameOrigin(req);
+        if (badOrigin) return badOrigin;
         const denied = requireAdmin(req);
         if (denied) return denied;
         const body = await req.json();
@@ -128,6 +175,8 @@ export default async (req: Request) => {
         const body = await req.json();
         const isViewOnly = Object.keys(body).every((key) => ["id", "views"].includes(key));
         if (!isViewOnly) {
+          const badOrigin = requireSameOrigin(req);
+          if (badOrigin) return badOrigin;
           const denied = requireAdmin(req);
           if (denied) return denied;
         }
@@ -148,6 +197,8 @@ export default async (req: Request) => {
       }
 
       if (req.method === "DELETE") {
+        const badOrigin = requireSameOrigin(req);
+        if (badOrigin) return badOrigin;
         const denied = requireAdmin(req);
         if (denied) return denied;
         const { ids } = await req.json();
@@ -157,7 +208,7 @@ export default async (req: Request) => {
     }
 
     if (resource === "subscribers") {
-      if (["PATCH", "DELETE"].includes(req.method)) {
+      if (["GET", "PATCH", "DELETE"].includes(req.method)) {
         const denied = requireAdmin(req);
         if (denied) return denied;
       }
@@ -166,6 +217,8 @@ export default async (req: Request) => {
         return json({ data: rows.map(toSubscriber), count: rows.length });
       }
       if (req.method === "POST") {
+        const badOrigin = requireSameOrigin(req);
+        if (badOrigin) return badOrigin;
         const body = await req.json();
         const [row] = await db.insert(subscribers).values({
           email: body.email,
@@ -175,11 +228,15 @@ export default async (req: Request) => {
         return json({ data: toSubscriber(row) }, { status: 201 });
       }
       if (req.method === "PATCH") {
+        const badOrigin = requireSameOrigin(req);
+        if (badOrigin) return badOrigin;
         const body = await req.json();
         await db.update(subscribers).set({ status: body.status }).where(eq(subscribers.id, body.id));
         return json({ data: null });
       }
       if (req.method === "DELETE") {
+        const badOrigin = requireSameOrigin(req);
+        if (badOrigin) return badOrigin;
         const { ids } = await req.json();
         await db.delete(subscribers).where(inArray(subscribers.id, ids));
         return json({ data: null });
@@ -187,7 +244,7 @@ export default async (req: Request) => {
     }
 
     if (resource === "content_suggestions") {
-      if (["PATCH", "DELETE"].includes(req.method)) {
+      if (["GET", "PATCH", "DELETE"].includes(req.method)) {
         const denied = requireAdmin(req);
         if (denied) return denied;
       }
@@ -196,11 +253,15 @@ export default async (req: Request) => {
         return json({ data: rows.map(toSuggestion), count: rows.length });
       }
       if (req.method === "POST") {
+        const badOrigin = requireSameOrigin(req);
+        if (badOrigin) return badOrigin;
         const body = await req.json();
         const [row] = await db.insert(contentSuggestions).values(body).returning();
         return json({ data: toSuggestion(row) }, { status: 201 });
       }
       if (req.method === "PATCH") {
+        const badOrigin = requireSameOrigin(req);
+        if (badOrigin) return badOrigin;
         const body = await req.json();
         await db.update(contentSuggestions).set({ status: body.status }).where(eq(contentSuggestions.id, body.id));
         return json({ data: null });
