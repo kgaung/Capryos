@@ -153,6 +153,7 @@ const BlogPostPage: React.FC = () => {
         description={post.excerpt}
         keywords={post.tags.join(', ')}
         image={post.thumbnail_url}
+        url={`https://capryos.com/blog/${post.slug}`}
         type="article"
         author={post.author}
         publishedTime={post.published_at}

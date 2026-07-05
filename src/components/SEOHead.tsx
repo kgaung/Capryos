@@ -1,5 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
+import { siteUrl } from '../lib/site';
 
 interface SEOHeadProps {
   title?: string;
@@ -18,7 +19,7 @@ const SEOHead: React.FC<SEOHeadProps> = ({
   description = 'Simplifying crypto, entrepreneurship, and financial knowledge for the next generation of builders.',
   keywords = 'crypto, cryptocurrency, business, entrepreneurship, DeFi, blockchain, startup, investing',
   image = '/og-image.jpg',
-  url = 'https://capryos.com',
+  url = siteUrl,
   type = 'website',
   author = 'Kane',
   publishedTime,
@@ -77,7 +78,7 @@ const SEOHead: React.FC<SEOHeadProps> = ({
             name: 'Capryos',
             logo: {
               '@type': 'ImageObject',
-              url: '/logo.png',
+              url: `${siteUrl}/CAPRYOS-LOGO.jpg`,
             },
           },
           ...(publishedTime && { datePublished: publishedTime }),

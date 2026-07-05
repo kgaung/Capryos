@@ -87,6 +87,7 @@ const Blog: React.FC = () => {
         title="Blog - Capryos"
         description="Read the latest insights on crypto, business strategies, and entrepreneurship from the Capryos team."
         keywords="crypto blog, business blog, entrepreneurship articles, DeFi guides, startup advice"
+        url="https://capryos.com/blog"
       />
       
       {/* Hero Section */}

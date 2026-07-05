@@ -55,8 +55,8 @@ const Home: React.FC = () => {
 
   const stats = [
     { label: "Active Readers", value: "10K+", icon: <Users className="h-6 w-6" /> },
-    { label: "Articles Published", value: "200+", icon: <BookOpen className="h-6 w-6" /> },
-    { label: "Topics Covered", value: "50+", icon: <Brain className="h-6 w-6" /> },
+    { label: "Published Article", value: "1", icon: <BookOpen className="h-6 w-6" /> },
+    { label: "Topics Covered", value: "3", icon: <Brain className="h-6 w-6" /> },
     { label: "Community Members", value: "5K+", icon: <Globe2 className="h-6 w-6" /> }
   ];
 

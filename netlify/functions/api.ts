@@ -2,7 +2,7 @@ import type { Config } from "@netlify/functions";
 import { and, desc, eq, inArray, ne, sql } from "drizzle-orm";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { db } from "../../db/index.js";
-import { blogPosts, contentSuggestions, subscribers } from "../../db/schema.js";
+import { blogPosts, contentSuggestions, rateLimits, subscribers } from "../../db/schema.js";
 
 const json = (body: unknown, init: ResponseInit = {}) =>
   Response.json(body, { headers: { "Cache-Control": "no-store", ...init.headers }, ...init });
@@ -96,6 +96,37 @@ const getResource = (req: Request) =>
 const dateOrNull = (value: unknown) => (typeof value === "string" && value ? new Date(value) : null);
 const cleanLimit = (value: string | null) => Math.min(Math.max(Number(value || "100") || 100, 1), 100);
 const secureCookie = (req: Request) => new URL(req.url).protocol === "https:" ? "; Secure" : "";
+const clientKey = (req: Request) =>
+  req.headers.get("x-nf-client-connection-ip") ||
+  req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+  "unknown";
+
+const checkRateLimit = async (req: Request, action: string, limit: number, windowMs: number) => {
+  const key = clientKey(req);
+  const now = new Date();
+  const windowStart = new Date(now.getTime() - windowMs);
+  const [existing] = await db
+    .select()
+    .from(rateLimits)
+    .where(and(eq(rateLimits.action, action), eq(rateLimits.key, key)))
+    .limit(1);
+
+  if (!existing || existing.windowStart < windowStart) {
+    if (existing) {
+      await db.update(rateLimits).set({ count: 1, windowStart: now }).where(eq(rateLimits.id, existing.id));
+    } else {
+      await db.insert(rateLimits).values({ action, key, count: 1, windowStart: now });
+    }
+    return null;
+  }
+
+  if (existing.count >= limit) {
+    return json({ error: { message: "Too many submissions. Please try again later." } }, { status: 429 });
+  }
+
+  await db.update(rateLimits).set({ count: existing.count + 1 }).where(eq(rateLimits.id, existing.id));
+  return null;
+};
 
 export default async (req: Request) => {
   try {
@@ -224,6 +255,9 @@ export default async (req: Request) => {
         const badOrigin = requireSameOrigin(req);
         if (badOrigin) return badOrigin;
         const body = await req.json();
+        if (body["bot-field"]) return json({ error: { message: "Spam submission rejected" } }, { status: 400 });
+        const limited = await checkRateLimit(req, "subscribers:create", 5, 60 * 60 * 1000);
+        if (limited) return limited;
         const [row] = await db.insert(subscribers).values({
           email: body.email,
           name: body.name ?? null,
@@ -260,6 +294,9 @@ export default async (req: Request) => {
         const badOrigin = requireSameOrigin(req);
         if (badOrigin) return badOrigin;
         const body = await req.json();
+        if (body["bot-field"]) return json({ error: { message: "Spam submission rejected" } }, { status: 400 });
+        const limited = await checkRateLimit(req, "content_suggestions:create", 3, 60 * 60 * 1000);
+        if (limited) return limited;
         const [row] = await db.insert(contentSuggestions).values(body).returning();
         return json({ data: toSuggestion(row) }, { status: 201 });
       }

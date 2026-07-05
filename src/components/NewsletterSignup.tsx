@@ -24,13 +24,15 @@ const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
     setIsLoading(true);
     
     try {
+      const formData = new FormData(e.currentTarget as HTMLFormElement);
       const { error } = await supabase
         .from('subscribers')
         .insert([
           {
             email: email.toLowerCase().trim(),
             name: name.trim() || null,
-            status: 'active'
+            status: 'active',
+            'bot-field': formData.get('bot-field') || ''
           }
         ]);
 
@@ -65,6 +67,9 @@ const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
           Get the latest insights delivered to your inbox.
         </p>
         <form onSubmit={handleSubmit} className="space-y-3">
+          <div className="hidden" aria-hidden="true">
+            <label>Leave this field empty <input name="bot-field" tabIndex={-1} autoComplete="off" /></label>
+          </div>
           <input
             type="email"
             value={email}
@@ -109,6 +114,9 @@ const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
         </div>
         
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="hidden" aria-hidden="true">
+            <label>Leave this field empty <input name="bot-field" tabIndex={-1} autoComplete="off" /></label>
+          </div>
           <input
             type="text"
             value={name}
@@ -163,6 +171,9 @@ const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
       </div>
       
       <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="hidden" aria-hidden="true">
+          <label>Leave this field empty <input name="bot-field" tabIndex={-1} autoComplete="off" /></label>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <input
             type="text"
@@ -202,7 +213,7 @@ const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
       </form>
       
       <p className="text-xs text-gray-500 dark:text-gray-400 mt-4 text-center">
-        Join 2000+ entrepreneurs. No spam, unsubscribe anytime.
+        No spam, unsubscribe anytime.
       </p>
     </div>
   );

@@ -11,6 +11,8 @@ import BlogPost from './pages/BlogPost';
 import Newsletter from './pages/Newsletter';
 import Contact from './pages/Contact';
 import Signup from './pages/Signup';
+import Privacy from './pages/Privacy';
+import Terms from './pages/Terms';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import PostEditor from './pages/admin/PostEditor';
@@ -42,6 +44,8 @@ function App() {
             <Route path="/newsletter" element={<Newsletter />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
           </Route>
         </Routes>
 

@@ -1,5 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Mail, Twitter, Linkedin, Github, TrendingUp } from 'lucide-react';
+import { socialLinks } from '../lib/site';
 
 const Footer: React.FC = () => {
   return (
@@ -37,22 +39,28 @@ const Footer: React.FC = () => {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Follow Us</h3>
             <div className="flex space-x-4">
-              <a 
-                href="#"
+              <a
+                href={socialLinks.twitter}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors duration-200"
                 aria-label="Twitter"
               >
                 <Twitter className="h-5 w-5" />
               </a>
-              <a 
-                href="#"
+              <a
+                href={socialLinks.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors duration-200"
                 aria-label="LinkedIn"
               >
                 <Linkedin className="h-5 w-5" />
               </a>
-              <a 
-                href="#"
+              <a
+                href={socialLinks.github}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="p-2 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors duration-200"
                 aria-label="GitHub"
               >
@@ -62,9 +70,13 @@ const Footer: React.FC = () => {
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center">
+        <div className="border-t border-gray-800 mt-8 pt-8 text-center space-y-3">
+          <div className="flex justify-center gap-5 text-sm">
+            <Link to="/privacy" className="text-gray-400 hover:text-white transition-colors duration-200">Privacy Policy</Link>
+            <Link to="/terms" className="text-gray-400 hover:text-white transition-colors duration-200">Terms of Service</Link>
+          </div>
           <p className="text-gray-400 text-sm">
-            © 2025 Capryos. All rights reserved. Built with passion for the future of finance.
+            © 2026 Capryos. All rights reserved. Built with passion for the future of finance.
           </p>
         </div>
       </div>

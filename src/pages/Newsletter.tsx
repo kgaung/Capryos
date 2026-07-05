@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Mail, CheckCircle, ArrowRight } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import toast from 'react-hot-toast';
+import SEOHead from '../components/SEOHead';
 
 const Newsletter: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -16,12 +17,14 @@ const Newsletter: React.FC = () => {
     setIsLoading(true);
 
     try {
+      const formData = new FormData(e.currentTarget as HTMLFormElement);
       const { error } = await supabase
         .from('subscribers')
         .insert([{
           email: email.toLowerCase().trim(),
           name: name.trim() || null,
-          status: 'active'
+          status: 'active',
+          'bot-field': formData.get('bot-field') || ''
         }]);
 
       if (error) {
@@ -76,6 +79,11 @@ const Newsletter: React.FC = () => {
 
   return (
     <div className="py-20">
+      <SEOHead
+        title="Newsletter - Capryos"
+        description="Subscribe to the Capryos newsletter for weekly crypto, business, and entrepreneurship insights."
+        url="https://capryos.com/newsletter"
+      />
       {/* Hero Section */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8 mb-20">
         <Mail className="h-16 w-16 text-blue-600 dark:text-blue-400 mx-auto" />
@@ -94,6 +102,9 @@ const Newsletter: React.FC = () => {
           <div className="space-y-8">
             <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 p-8 rounded-2xl shadow-lg">
               <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="hidden" aria-hidden="true">
+                  <label>Leave this field empty <input name="bot-field" tabIndex={-1} autoComplete="off" /></label>
+                </div>
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Your Name (Optional)
@@ -143,7 +154,7 @@ const Newsletter: React.FC = () => {
               </form>
               
               <p className="text-xs text-gray-600 dark:text-gray-400 mt-4">
-                Join 2000+ entrepreneurs. No spam, unsubscribe anytime. We respect your privacy.
+                No spam, unsubscribe anytime. We respect your privacy.
               </p>
             </div>
           </div>
@@ -179,17 +190,17 @@ const Newsletter: React.FC = () => {
       <section className="mt-20 bg-gray-50 dark:bg-gray-800 py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-gray-600 dark:text-gray-400 mb-8">
-            Trusted by entrepreneurs and crypto enthusiasts worldwide
+            Built for entrepreneurs and crypto enthusiasts
           </p>
           <div className="flex flex-wrap justify-center items-center gap-8 text-2xl font-bold text-gray-400 dark:text-gray-600">
-            <span>2000+</span>
-            <span>Subscribers</span>
-            <span>•</span>
-            <span>98%</span>
-            <span>Open Rate</span>
-            <span>•</span>
             <span>Weekly</span>
             <span>Insights</span>
+            <span>•</span>
+            <span>Practical</span>
+            <span>Guides</span>
+            <span>•</span>
+            <span>No</span>
+            <span>Spam</span>
           </div>
         </div>
       </section>
