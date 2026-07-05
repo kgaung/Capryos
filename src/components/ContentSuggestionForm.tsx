@@ -25,6 +25,7 @@ const ContentSuggestionForm: React.FC = () => {
     setIsLoading(true);
 
     try {
+      const form = new FormData(e.currentTarget as HTMLFormElement);
       const { error } = await supabase
         .from('content_suggestions')
         .insert([
@@ -33,7 +34,8 @@ const ContentSuggestionForm: React.FC = () => {
             email: formData.email.toLowerCase().trim(),
             subject: formData.subject.trim(),
             message: formData.message.trim(),
-            status: 'pending'
+            status: 'pending',
+            'bot-field': form.get('bot-field') || ''
           }
         ]);
 
@@ -84,6 +86,9 @@ const ContentSuggestionForm: React.FC = () => {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="hidden" aria-hidden="true">
+          <label>Leave this field empty <input name="bot-field" tabIndex={-1} autoComplete="off" /></label>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">

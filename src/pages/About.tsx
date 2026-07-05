@@ -14,10 +14,16 @@ import {
   Award,
   Rocket
 } from 'lucide-react';
+import SEOHead from '../components/SEOHead';
 
 const About: React.FC = () => {
   return (
     <div className="bg-gray-50 dark:bg-gray-900">
+      <SEOHead
+        title="About - Capryos"
+        description="Learn about Capryos, the mission behind its crypto and business education, and the team building clear resources for founders and learners."
+        url="https://capryos.com/about"
+      />
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white py-24">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjA1IiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
@@ -88,8 +94,8 @@ const About: React.FC = () => {
 
             <div className="p-6 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-500 text-white shadow-xl transform hover:scale-105 transition-transform duration-300">
               <BookOpen className="h-10 w-10 mb-4" />
-              <div className="text-3xl font-bold mb-2">200+</div>
-              <div className="text-sm opacity-90">Articles Published</div>
+              <div className="text-3xl font-bold mb-2">1</div>
+              <div className="text-sm opacity-90">Published Article</div>
             </div>
 
             <div className="p-6 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 text-white shadow-xl transform hover:scale-105 transition-transform duration-300">
@@ -100,8 +106,50 @@ const About: React.FC = () => {
 
             <div className="p-6 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-500 text-white shadow-xl transform hover:scale-105 transition-transform duration-300">
               <Zap className="h-10 w-10 mb-4" />
-              <div className="text-3xl font-bold mb-2">50+</div>
+              <div className="text-3xl font-bold mb-2">3</div>
               <div className="text-sm opacity-90">Topics Covered</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Founder & Team */}
+      <section className="py-20 bg-white dark:bg-gray-800">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold mb-4">
+              <Users className="h-5 w-5" />
+              <span>Founder & Team</span>
+            </div>
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-white">Built by Operators and Educators</h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="rounded-2xl border border-gray-200 bg-gray-50 p-8 dark:border-gray-700 dark:bg-gray-900">
+              <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-blue-600 text-xl font-bold text-white">K</div>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">Kane</h3>
+              <p className="mt-1 text-sm font-medium text-blue-600 dark:text-blue-400">Founder & Editor</p>
+              <p className="mt-4 text-gray-600 dark:text-gray-300">
+                Leads Capryos content strategy with a focus on practical crypto, finance, and startup education.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-gray-200 bg-gray-50 p-8 dark:border-gray-700 dark:bg-gray-900">
+              <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-emerald-600 text-xl font-bold text-white">R</div>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">Research Desk</h3>
+              <p className="mt-1 text-sm font-medium text-emerald-600 dark:text-emerald-400">Market Research</p>
+              <p className="mt-4 text-gray-600 dark:text-gray-300">
+                Tracks industry shifts, founder lessons, and emerging tools so articles stay grounded in current practice.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-gray-200 bg-gray-50 p-8 dark:border-gray-700 dark:bg-gray-900">
+              <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-orange-600 text-xl font-bold text-white">C</div>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">Contributor Network</h3>
+              <p className="mt-1 text-sm font-medium text-orange-600 dark:text-orange-400">Review & Community</p>
+              <p className="mt-4 text-gray-600 dark:text-gray-300">
+                Supports reviews, topic suggestions, and reader feedback across crypto, business, and entrepreneurship.
+              </p>
             </div>
           </div>
         </div>

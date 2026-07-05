@@ -34,3 +34,11 @@ export const contentSuggestions = pgTable("content_suggestions", {
   status: text("status").notNull().default("pending"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
+
+export const rateLimits = pgTable("rate_limits", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  action: text("action").notNull(),
+  key: text("key").notNull(),
+  count: integer("count").notNull().default(1),
+  windowStart: timestamp("window_start", { withTimezone: true }).defaultNow().notNull(),
+});

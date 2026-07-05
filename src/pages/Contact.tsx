@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, MessageSquare, Send, CheckCircle, Twitter, Linkedin, Github } from 'lucide-react';
+import SEOHead from '../components/SEOHead';
+import { socialLinks } from '../lib/site';
 
 const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -36,7 +38,7 @@ const Contact: React.FC = () => {
       setIsLoading(true);
 
       try {
-        await fetch('/', {
+        await fetch('/__forms.html', {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: new URLSearchParams(Array.from(formDataObj.entries()) as [string, string][]).toString()
@@ -60,14 +62,19 @@ const Contact: React.FC = () => {
     }
   };
 
-  const socialLinks = [
-    { icon: <Twitter className="h-5 w-5" />, label: 'Twitter', href: '#' },
-    { icon: <Linkedin className="h-5 w-5" />, label: 'LinkedIn', href: '#' },
-    { icon: <Github className="h-5 w-5" />, label: 'GitHub', href: '#' }
+  const contactSocialLinks = [
+    { icon: <Twitter className="h-5 w-5" />, label: 'Twitter', href: socialLinks.twitter },
+    { icon: <Linkedin className="h-5 w-5" />, label: 'LinkedIn', href: socialLinks.linkedin },
+    { icon: <Github className="h-5 w-5" />, label: 'GitHub', href: socialLinks.github }
   ];
 
   return (
     <div className="py-20">
+      <SEOHead
+        title="Contact - Capryos"
+        description="Contact Capryos for questions, collaborations, press inquiries, and support."
+        url="https://capryos.com/contact"
+      />
       {/* Hero Section */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6 mb-12">
         <MessageSquare className="h-14 w-14 text-blue-600 dark:text-blue-400 mx-auto" />
@@ -100,6 +107,7 @@ const Contact: React.FC = () => {
                 name="contact"
                 method="POST"
                 data-netlify="true"
+                data-netlify-recaptcha="true"
                 netlify-honeypot="bot-field"
                 onSubmit={handleSubmit}
                 className="rounded-2xl p-6 bg-white dark:bg-gray-800 shadow-xl border border-gray-100 dark:border-gray-700"
@@ -173,6 +181,8 @@ const Contact: React.FC = () => {
                   />
                 </div>
 
+                <div data-netlify-recaptcha="true" className="mt-4" />
+
                 <div className="mt-6 flex items-center gap-4">
                   <button
                     type="submit"
@@ -213,10 +223,12 @@ const Contact: React.FC = () => {
             <div className="rounded-2xl p-6 bg-white dark:bg-gray-800 shadow-lg border border-gray-100 dark:border-gray-700">
               <h3 className="text-lg font-semibold mb-3">Follow Us</h3>
               <div className="space-y-3">
-                {socialLinks.map((social, index) => (
+                {contactSocialLinks.map((social, index) => (
                   <a
                     key={index}
                     href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition"
                   >
                     <div className="w-10 h-10 rounded-md bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center text-white">

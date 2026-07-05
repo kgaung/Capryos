@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AuthError, MissingIdentityError, signup } from '@netlify/identity';
+import { AuthError, MissingIdentityError, oauthLogin, signup } from '@netlify/identity';
 import { Eye, EyeOff, Lock, Mail, UserPlus } from 'lucide-react';
 import toast from 'react-hot-toast';
 import SEOHead from '../components/SEOHead';
@@ -11,6 +11,17 @@ const Signup: React.FC = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const passwordScore = [
+    password.length >= 8,
+    /[A-Z]/.test(password),
+    /[a-z]/.test(password),
+    /\d/.test(password),
+    /[^A-Za-z0-9]/.test(password),
+  ].filter(Boolean).length;
+
+  const strengthLabel = passwordScore <= 2 ? 'Weak' : passwordScore <= 4 ? 'Good' : 'Strong';
+  const strengthColor = passwordScore <= 2 ? 'bg-red-500' : passwordScore <= 4 ? 'bg-yellow-500' : 'bg-green-500';
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -44,6 +55,10 @@ const Signup: React.FC = () => {
     }
   };
 
+  const handleGoogleSignup = () => {
+    oauthLogin('google');
+  };
+
   return (
     <>
       <SEOHead
@@ -62,7 +77,23 @@ const Signup: React.FC = () => {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="mt-8 rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+          <div className="mt-8 rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+            <button
+              type="button"
+              onClick={handleGoogleSignup}
+              className="flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-semibold text-gray-800 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100 dark:hover:bg-gray-900"
+            >
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white text-sm font-bold text-blue-600">G</span>
+              Continue with Google
+            </button>
+
+            <div className="my-6 flex items-center gap-3 text-xs uppercase tracking-wide text-gray-400">
+              <span className="h-px flex-1 bg-gray-200 dark:bg-gray-800" />
+              Email signup
+              <span className="h-px flex-1 bg-gray-200 dark:bg-gray-800" />
+            </div>
+
+            <form onSubmit={handleSubmit}>
             <div className="space-y-4">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-200">Name</label>
@@ -92,6 +123,17 @@ const Signup: React.FC = () => {
                     placeholder="you@example.com"
                   />
                 </div>
+                {password && (
+                  <div className="mt-2">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-medium text-gray-600 dark:text-gray-300">Password strength</span>
+                      <span className="text-gray-500 dark:text-gray-400">{strengthLabel}</span>
+                    </div>
+                    <div className="mt-2 h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-800">
+                      <div className={`h-full ${strengthColor} transition-all`} style={{ width: `${Math.max(passwordScore, 1) * 20}%` }} />
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div>
@@ -129,7 +171,15 @@ const Signup: React.FC = () => {
                 {isSubmitting ? 'Creating account...' : 'Sign up'}
               </button>
             </div>
-          </form>
+            </form>
+
+            <p className="mt-5 text-center text-xs text-gray-500 dark:text-gray-400">
+              By signing up, you agree to the{' '}
+              <Link to="/terms" className="text-blue-600 hover:underline dark:text-blue-400">Terms of Service</Link>
+              {' '}and acknowledge the{' '}
+              <Link to="/privacy" className="text-blue-600 hover:underline dark:text-blue-400">Privacy Policy</Link>.
+            </p>
+          </div>
 
           <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-300">
             Admin access stays separate.{' '}
