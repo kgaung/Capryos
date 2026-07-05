@@ -3,12 +3,14 @@ import { HelmetProvider } from 'react-helmet-async';
 import { Toaster } from 'react-hot-toast';
 import { ThemeProvider } from './contexts/ThemeContext';
 import Layout from './components/Layout';
+import IdentityCallback from './components/IdentityCallback';
 import Home from './pages/Home';
 import About from './pages/About';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import Newsletter from './pages/Newsletter';
 import Contact from './pages/Contact';
+import Signup from './pages/Signup';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import PostEditor from './pages/admin/PostEditor';
@@ -20,6 +22,7 @@ function App() {
   return (
     <HelmetProvider>
       <ThemeProvider>
+        <IdentityCallback />
         <Routes>
           {/* Admin Routes */}
           <Route path="/admin/login" element={<AdminLogin />} />
@@ -38,6 +41,7 @@ function App() {
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/newsletter" element={<Newsletter />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/signup" element={<Signup />} />
           </Route>
         </Routes>
 
