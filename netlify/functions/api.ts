@@ -88,7 +88,11 @@ const requireSameOrigin = (req: Request) => {
   return null;
 };
 
-const getResource = (req: Request) => new URL(req.url).pathname.replace(/^\/api\/?/, "").split("/")[0];
+const getResource = (req: Request) =>
+  new URL(req.url).pathname
+    .replace(/^\/api\/?/, "")
+    .replace(/^\/\.netlify\/functions\/api\/?/, "")
+    .split("/")[0];
 const dateOrNull = (value: unknown) => (typeof value === "string" && value ? new Date(value) : null);
 const cleanLimit = (value: string | null) => Math.min(Math.max(Number(value || "100") || 100, 1), 100);
 const secureCookie = (req: Request) => new URL(req.url).protocol === "https:" ? "; Secure" : "";
