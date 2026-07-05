@@ -28,7 +28,7 @@ const AdminLogin: React.FC = () => {
       } else {
         toast.success('Welcome back!');
       }
-    } catch (err) {
+    } catch {
       toast.error('An unexpected error occurred');
     } finally {
       setIsLoading(false);
@@ -41,7 +41,7 @@ const AdminLogin: React.FC = () => {
         {/* Left - Brand / Promo */}
         <div className="hidden lg:flex flex-col items-start gap-6">
           <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-yellow-400 to-amber-600 flex items-center justify-center shadow-2xl ring-1 ring-white/10">
-            <img src="/public/CAPRYOS-LOGO.jpg" alt="Capryos" className="w-12 h-12 rounded-full object-cover" />
+            <img src="/CAPRYOS-LOGO.jpg" alt="Capryos" className="w-12 h-12 rounded-full object-cover" />
           </div>
           <div>
             <h1 className="text-3xl font-semibold tracking-tight">Capryos Admin</h1>
@@ -49,7 +49,7 @@ const AdminLogin: React.FC = () => {
           </div>
 
           <div className="mt-4 p-4 rounded-2xl bg-white/4 backdrop-blur-md border border-white/6 shadow-xl">
-            <p className="text-sm text-gray-300/80">Manage posts, subscribers and suggestions with a premium interface. Fast. Secure. Beautiful.</p>
+            <p className="text-sm text-gray-300/80">Manage posts, subscribers, and content suggestions from a protected workspace.</p>
             <div className="mt-4 flex items-center gap-3">
               <div className="w-10 h-10 rounded-md bg-gradient-to-tr from-indigo-600 to-pink-500 flex items-center justify-center text-sm font-semibold">P</div>
               <div>
@@ -123,7 +123,7 @@ const AdminLogin: React.FC = () => {
                       <input type="checkbox" className="h-4 w-4 rounded border-white/10 bg-transparent" />
                       <span className="text-xs text-gray-300/80">Remember me</span>
                     </label>
-                    <a href="/forgot" className="text-sm text-yellow-300/90 hover:underline">Forgot password?</a>
+                    <span className="text-xs text-gray-300/80">Admin credentials are managed in Netlify environment settings.</span>
                   </div>
 
                   <div>
@@ -144,8 +144,7 @@ const AdminLogin: React.FC = () => {
 
               <div className="text-center">
                 <p className="text-sm text-gray-300/80">
-                  Don't have admin access?{' '}
-                  <a href="/contact" className="font-medium text-yellow-300/90 hover:underline">Contact us</a>
+                  Only authorized Capryos administrators can access this area.
                 </p>
               </div>
             </form>

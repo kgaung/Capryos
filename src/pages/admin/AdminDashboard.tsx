@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
-import { ChartBar as BarChart3, Users, FileText, MessageSquare, Plus, Eye, CreditCard as Edit, Trash2 } from 'lucide-react';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Users, FileText, MessageSquare, Eye, CreditCard as Edit, Trash2, LogOut, Plus } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { supabase, type BlogPost, type Subscriber, type ContentSuggestion } from '../../lib/supabase';
 import toast from 'react-hot-toast';
@@ -16,7 +16,8 @@ const Sparkline: React.FC<{ data?: number[] }> = ({ data = [2,4,3,5,6,5,7] }) =>
 };
 
 const AdminDashboard: React.FC = () => {
-  const { user, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
+  const { user, loading: authLoading, signOut } = useAuth();
   const [stats, setStats] = useState({
     totalPosts: 0,
     totalSubscribers: 0,
@@ -74,7 +75,7 @@ const AdminDashboard: React.FC = () => {
         supabase.from('content_suggestions').select('*', { count: 'exact' })
       ]);
 
-      const totalViews = postsResult.data?.reduce((sum, post) => sum + (post.views || 0), 0) || 0;
+      const totalViews = ((postsResult.data || []) as Pick<BlogPost, 'views'>[]).reduce((sum, post) => sum + (post.views || 0), 0);
 
       setStats({
         totalPosts: postsResult.count || 0,
@@ -115,6 +116,15 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  const handleSignOut = async () => {
+    const { error } = await signOut();
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    navigate('/admin/login');
+  };
+
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-indigo-900 to-black">
@@ -149,27 +159,29 @@ const AdminDashboard: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-10">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-yellow-400 to-amber-600 flex items-center justify-center shadow-2xl ring-1 ring-white/10">
-              <img src="public/CAPRYOS-LOGO.jpg" alt="Capryos" className="w-10 h-10 rounded-full object-cover" />
+              <img src="/CAPRYOS-LOGO.jpg" alt="Capryos" className="w-10 h-10 rounded-full object-cover" />
             </div>
             <div>
               <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">Capryos Admin</h1>
-              <p className="text-sm text-gray-300/80">Curated insights • Elegant control • Real-time updates</p>
+              <p className="text-sm text-gray-300/80">Secure publishing, subscriber management, and content review</p>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
             <button
-              onClick={() => window.open('/admin/stats', '_blank')}
-              className="px-4 py-2 rounded-lg bg-white/6 backdrop-blur-sm border border-white/6 text-sm hover:scale-[1.02] transition"
+              onClick={handleSignOut}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/6 backdrop-blur-sm border border-white/6 text-sm hover:bg-white/10 transition"
             >
-              Insights
+              <LogOut className="h-4 w-4" />
+              Sign Out
             </button>
-            <button
-              onClick={() => window.open('/admin/posts/new', '_blank')}
-              className="px-4 py-2 rounded-lg bg-gradient-to-r from-yellow-400 to-amber-600 text-black font-medium shadow-lg hover:brightness-95 transition"
+            <Link
+              to="/admin/posts/new"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-yellow-400 to-amber-600 text-black font-medium shadow-lg hover:brightness-95 transition"
             >
+              <Plus className="h-4 w-4" />
               New Post
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -206,7 +218,7 @@ const AdminDashboard: React.FC = () => {
           <div className="rounded-2xl p-6 bg-white/4 backdrop-blur-md border border-white/6 shadow-2xl">
             <div className="flex items-center justify-between mb-6">
               <h2 className="flex items-center gap-2 text-lg font-medium"><FileText className="h-5 w-5" />Recent Posts</h2>
-              <button onClick={() => window.open('/admin/posts', '_blank')} className="text-sm text-yellow-300/90 hover:underline">View all</button>
+              <Link to="/admin/posts" className="text-sm text-yellow-300/90 hover:underline">View all</Link>
             </div>
 
             <div className="space-y-4 max-h-72 overflow-y-auto pr-2">
@@ -222,12 +234,12 @@ const AdminDashboard: React.FC = () => {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => window.open(`/blog/${post.slug}`, '_blank')} className="p-2 rounded-md bg-white/6 hover:bg-white/10">
+                    <a href={`/blog/${post.slug}`} target="_blank" rel="noreferrer" className="p-2 rounded-md bg-white/6 hover:bg-white/10">
                       <Eye className="h-4 w-4" />
-                    </button>
-                    <button onClick={() => window.open(`/admin/posts/edit/${post.id}`, '_blank')} className="p-2 rounded-md bg-white/6 hover:bg-white/10">
+                    </a>
+                    <Link to={`/admin/posts/edit/${post.id}`} className="p-2 rounded-md bg-white/6 hover:bg-white/10">
                       <Edit className="h-4 w-4" />
-                    </button>
+                    </Link>
                     <button onClick={() => deletePost(post.id)} className="p-2 rounded-md bg-white/6 hover:bg-white/10">
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -243,7 +255,7 @@ const AdminDashboard: React.FC = () => {
             <div className="rounded-2xl p-6 bg-white/4 backdrop-blur-md border border-white/6 shadow-2xl">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="flex items-center gap-2 text-lg font-medium"><Users className="h-5 w-5" />Recent Subscribers</h3>
-                <button onClick={() => window.open('/admin/subscribers', '_blank')} className="text-sm text-yellow-300/90 hover:underline">View all</button>
+                <Link to="/admin/subscribers" className="text-sm text-yellow-300/90 hover:underline">View all</Link>
               </div>
               <div className="space-y-3 max-h-48 overflow-y-auto pr-2">
                 {recentSubscribers.map(s => (
@@ -267,7 +279,7 @@ const AdminDashboard: React.FC = () => {
             <div className="rounded-2xl p-6 bg-white/4 backdrop-blur-md border border-white/6 shadow-2xl">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="flex items-center gap-2 text-lg font-medium"><MessageSquare className="h-5 w-5" />Content Suggestions</h3>
-                <button onClick={() => window.open('/admin/suggestions', '_blank')} className="text-sm text-yellow-300/90 hover:underline">View all</button>
+                <Link to="/admin/suggestions" className="text-sm text-yellow-300/90 hover:underline">View all</Link>
               </div>
               <div className="space-y-3 max-h-48 overflow-y-auto pr-2">
                 {recentSuggestions.map(s => (

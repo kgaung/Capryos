@@ -1,9 +1,7 @@
 # Netlify redirects file
+# API routes must stay before the SPA fallback.
+/api/*  /.netlify/functions/api/:splat  200
+
 # Handle client-side routing
-/*    /index.html   200
-
-# Admin routes
 /admin/*  /index.html  200
-
-# API routes (if any)
-/api/*  /.netlify/functions/:splat  200
+/*    /index.html   200

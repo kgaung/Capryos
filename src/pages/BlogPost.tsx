@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { Calendar, Clock, ArrowLeft, Share2, Twitter, Linkedin, Facebook, Eye, Tag } from 'lucide-react';
 import { format } from 'date-fns';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import type { CSSProperties, ReactNode } from 'react';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import { supabase, type BlogPost } from '../lib/supabase';
@@ -15,7 +16,6 @@ import toast from 'react-hot-toast';
 
 const BlogPostPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
-  const navigate = useNavigate();
   const [post, setPost] = useState<BlogPost | null>(null);
   const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -82,8 +82,6 @@ const BlogPostPage: React.FC = () => {
 
     const url = window.location.href;
     const title = post.title;
-    const text = post.excerpt;
-
     let shareUrl = '';
 
     switch (platform) {
@@ -287,12 +285,21 @@ const BlogPostPage: React.FC = () => {
               remarkPlugins={[remarkGfm]}
               rehypePlugins={[rehypeRaw]}
               components={{
-                code({ node, inline, className, children, ...props }) {
+                code({
+                  inline,
+                  className,
+                  children,
+                  ...props
+                }: {
+                  inline?: boolean;
+                  className?: string;
+                  children?: ReactNode;
+                }) {
                   const match = /language-(\w+)/.exec(className || '');
                   return !inline && match ? (
                     <div className="my-6 rounded-xl overflow-hidden shadow-lg ring-1 ring-gray-200 dark:ring-gray-700">
                       <SyntaxHighlighter
-                        style={tomorrow}
+                        style={tomorrow as { [key: string]: CSSProperties }}
                         language={match[1]}
                         PreTag="div"
                         customStyle={{

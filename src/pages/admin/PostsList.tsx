@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, Navigate } from 'react-router-dom';
-import { Plus, Search, ListFilter as Filter, Eye, CreditCard as Edit, Trash2, Calendar, Clock } from 'lucide-react';
+import { Plus, Search, ListFilter as Filter, Eye, CreditCard as Edit, Trash2, Clock } from 'lucide-react';
 import { format } from 'date-fns';
 import { useAuth } from '../../hooks/useAuth';
 import { supabase, type BlogPost } from '../../lib/supabase';

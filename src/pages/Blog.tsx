@@ -1,6 +1,5 @@
-import React from 'react';
 import { useState, useEffect } from 'react';
-import { Search, Filter, Calendar, Clock, ArrowRight, BookOpen, Loader } from 'lucide-react';
+import { Search, BookOpen, Loader } from 'lucide-react';
 import { supabase, type BlogPost } from '../lib/supabase';
 import SEOHead from '../components/SEOHead';
 import BlogCard from '../components/BlogCard';
@@ -27,12 +26,13 @@ const Blog: React.FC = () => {
 
       if (error) throw error;
       
-      setPosts(data || []);
+      const fetchedPosts = (data || []) as BlogPost[];
+      setPosts(fetchedPosts);
       
       // Extract unique tags
       const tags = new Set<string>();
-      data?.forEach(post => {
-        post.tags.forEach(tag => tags.add(tag));
+      fetchedPosts.forEach((post) => {
+        post.tags.forEach((tag) => tags.add(tag));
       });
       setAllTags(Array.from(tags).sort());
     } catch (error) {
