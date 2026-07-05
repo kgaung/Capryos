@@ -28,7 +28,7 @@ const AdminLogin: React.FC = () => {
       } else {
         toast.success('Welcome back!');
       }
-    } catch (err) {
+    } catch {
       toast.error('An unexpected error occurred');
     } finally {
       setIsLoading(false);

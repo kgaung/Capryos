@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ArrowRight, Zap, TrendingUp, Users, Target, Star, Quote, BookOpen, Sparkles, Award, Shield, Rocket, Brain, LineChart, Globe2 } from 'lucide-react';
 import SEOHead from '../components/SEOHead';
 import NewsletterSignup from '../components/NewsletterSignup';
@@ -9,8 +9,6 @@ import { supabase, type BlogPost } from '../lib/supabase';
 
 const Home: React.FC = () => {
   const [featuredPosts, setFeaturedPosts] = useState<BlogPost[]>([]);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     fetchFeaturedPosts();
@@ -26,11 +24,11 @@ const Home: React.FC = () => {
         .limit(3);
 
       if (error) throw error;
-      setFeaturedPosts(data || []);
+      setFeaturedPosts((data || []) as BlogPost[]);
     } catch (error) {
       console.error('Error fetching featured posts:', error);
     } finally {
-      setLoading(false);
+      // No visible loading state is rendered on the home page.
     }
   };
 

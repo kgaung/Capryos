@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
-import { ChartBar as BarChart3, Users, FileText, MessageSquare, Plus, Eye, CreditCard as Edit, Trash2 } from 'lucide-react';
+import { Users, FileText, MessageSquare, Eye, CreditCard as Edit, Trash2 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { supabase, type BlogPost, type Subscriber, type ContentSuggestion } from '../../lib/supabase';
 import toast from 'react-hot-toast';
@@ -74,7 +74,7 @@ const AdminDashboard: React.FC = () => {
         supabase.from('content_suggestions').select('*', { count: 'exact' })
       ]);
 
-      const totalViews = postsResult.data?.reduce((sum, post) => sum + (post.views || 0), 0) || 0;
+      const totalViews = ((postsResult.data || []) as Pick<BlogPost, 'views'>[]).reduce((sum, post) => sum + (post.views || 0), 0);
 
       setStats({
         totalPosts: postsResult.count || 0,

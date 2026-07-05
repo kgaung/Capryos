@@ -16,21 +16,23 @@ const Newsletter: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Use Supabase Auth signUp → this triggers email confirmation
-      const { error } = await supabase.auth.signUp({
-        email: email.toLowerCase().trim(),
-        password: crypto.randomUUID(), // random password (they won’t log in)
-      });
+      const { error } = await supabase
+        .from('subscribers')
+        .insert([{
+          email: email.toLowerCase().trim(),
+          name: name.trim() || null,
+          status: 'active'
+        }]);
 
       if (error) {
-        if (error.message.includes('already registered')) {
+        if (error.code === '23505' || error.message.includes('duplicate')) {
           toast.error('This email is already subscribed!');
         } else {
           throw error;
         }
       } else {
         setIsSubmitted(true);
-        toast.success('Check your inbox to confirm your subscription!');
+        toast.success('Successfully subscribed to our newsletter!');
         setEmail('');
         setName('');
       }

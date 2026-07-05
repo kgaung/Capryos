@@ -39,7 +39,7 @@ const Contact: React.FC = () => {
         await fetch('/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: new URLSearchParams(formDataObj as any).toString()
+          body: new URLSearchParams(Array.from(formDataObj.entries()) as [string, string][]).toString()
         });
 
         setIsSubmitted(true);
