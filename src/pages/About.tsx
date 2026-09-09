@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Lightbulb,
   Globe,
@@ -15,8 +15,30 @@ import {
   Rocket
 } from 'lucide-react';
 import SEOHead from '../components/SEOHead';
+import { supabase } from '../lib/supabase';
 
 const About: React.FC = () => {
+  const [publishedCount, setPublishedCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchPublishedCount = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('blog_posts')
+          .select('id')
+          .eq('status', 'published')
+          .limit(100);
+
+        if (error) throw error;
+        setPublishedCount((data || []).length);
+      } catch (error) {
+        console.error('Error fetching published post count:', error);
+      }
+    };
+
+    fetchPublishedCount();
+  }, []);
+
   return (
     <div className="bg-gray-50 dark:bg-gray-900">
       <SEOHead
@@ -94,8 +116,8 @@ const About: React.FC = () => {
 
             <div className="p-6 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-500 text-white shadow-xl transform hover:scale-105 transition-transform duration-300">
               <BookOpen className="h-10 w-10 mb-4" />
-              <div className="text-3xl font-bold mb-2">1</div>
-              <div className="text-sm opacity-90">Published Article</div>
+              <div className="text-3xl font-bold mb-2">{publishedCount === null ? '-' : publishedCount}</div>
+              <div className="text-sm opacity-90">{publishedCount === 1 ? 'Published Article' : 'Published Articles'}</div>
             </div>
 
             <div className="p-6 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 text-white shadow-xl transform hover:scale-105 transition-transform duration-300">
