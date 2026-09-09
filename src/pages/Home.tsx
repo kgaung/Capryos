@@ -9,9 +9,11 @@ import { supabase, type BlogPost } from '../lib/supabase';
 
 const Home: React.FC = () => {
   const [featuredPosts, setFeaturedPosts] = useState<BlogPost[]>([]);
+  const [publishedCount, setPublishedCount] = useState<number | null>(null);
 
   useEffect(() => {
     fetchFeaturedPosts();
+    fetchPublishedCount();
   }, []);
 
   const fetchFeaturedPosts = async () => {
@@ -29,6 +31,21 @@ const Home: React.FC = () => {
       console.error('Error fetching featured posts:', error);
     } finally {
       // No visible loading state is rendered on the home page.
+    }
+  };
+
+  const fetchPublishedCount = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('blog_posts')
+        .select('id')
+        .eq('status', 'published')
+        .limit(100);
+
+      if (error) throw error;
+      setPublishedCount((data || []).length);
+    } catch (error) {
+      console.error('Error fetching published post count:', error);
     }
   };
 
@@ -55,7 +72,7 @@ const Home: React.FC = () => {
 
   const stats = [
     { label: "Active Readers", value: "10K+", icon: <Users className="h-6 w-6" /> },
-    { label: "Published Article", value: "1", icon: <BookOpen className="h-6 w-6" /> },
+    { label: publishedCount === 1 ? "Published Article" : "Published Articles", value: publishedCount === null ? "-" : String(publishedCount), icon: <BookOpen className="h-6 w-6" /> },
     { label: "Topics Covered", value: "3", icon: <Brain className="h-6 w-6" /> },
     { label: "Community Members", value: "5K+", icon: <Globe2 className="h-6 w-6" /> }
   ];
