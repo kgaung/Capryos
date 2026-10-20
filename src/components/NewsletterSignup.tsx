@@ -109,7 +109,7 @@ const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
           <Mail className="h-12 w-12 text-blue-600 dark:text-blue-400 mx-auto mb-4" />
           <h3 className="text-2xl font-bold mb-2">Join Our Newsletter</h3>
           <p className="text-gray-600 dark:text-gray-300">
-            Get weekly insights on crypto, business, and entrepreneurship.
+            Get an email whenever a new blog post goes up.
           </p>
         </div>
         

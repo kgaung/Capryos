@@ -48,10 +48,9 @@ const Newsletter: React.FC = () => {
   };
 
   const benefits = [
-    "Weekly crypto insights and market analysis",
-    "Exclusive business growth strategies",
-    "Early access to new content and resources",
-    "Community updates and networking opportunities",
+    "An email when a new blog post is published",
+    "Personal takes on crypto and tech news",
+    "Notes and impressions on tech products",
     "No spam, unsubscribe anytime"
   ];
 
@@ -81,7 +80,7 @@ const Newsletter: React.FC = () => {
     <div className="py-20">
       <SEOHead
         title="Newsletter - Capryos"
-        description="Subscribe to the Capryos newsletter for weekly crypto, business, and entrepreneurship insights."
+        description="Subscribe to get new Capryos blog posts about crypto and tech by email."
         url="https://capryos.com/newsletter"
       />
       {/* Hero Section */}
@@ -90,7 +89,7 @@ const Newsletter: React.FC = () => {
         <div className="space-y-4">
           <h1 className="text-4xl sm:text-5xl font-bold">Join Our Newsletter</h1>
           <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
-            Get the latest insights on crypto, business strategies, and entrepreneurship 
+            Get new blog posts about cryptocurrency, tech products, and tech news
             delivered straight to your inbox.
           </p>
         </div>
@@ -172,16 +171,6 @@ const Newsletter: React.FC = () => {
                 ))}
               </ul>
             </div>
-
-            <div className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 p-6 rounded-xl">
-              <h3 className="font-semibold text-green-800 dark:text-green-400 mb-2">
-                🎯 Free Bonus for New Subscribers
-              </h3>
-              <p className="text-green-700 dark:text-green-300 text-sm">
-                Get our "Crypto Fundamentals Cheat Sheet" - a comprehensive guide 
-                covering the essential concepts every beginner needs to know.
-              </p>
-            </div>
           </div>
         </div>
       </div>
@@ -190,14 +179,14 @@ const Newsletter: React.FC = () => {
       <section className="mt-20 bg-gray-50 dark:bg-gray-800 py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-gray-600 dark:text-gray-400 mb-8">
-            Built for entrepreneurs and crypto enthusiasts
+            Written for crypto and tech enthusiasts
           </p>
           <div className="flex flex-wrap justify-center items-center gap-8 text-2xl font-bold text-gray-400 dark:text-gray-600">
-            <span>Weekly</span>
-            <span>Insights</span>
+            <span>Crypto</span>
             <span>•</span>
-            <span>Practical</span>
-            <span>Guides</span>
+            <span>Tech</span>
+            <span>•</span>
+            <span>News</span>
             <span>•</span>
             <span>No</span>
             <span>Spam</span>

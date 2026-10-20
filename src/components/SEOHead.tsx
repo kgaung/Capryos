@@ -15,9 +15,9 @@ interface SEOHeadProps {
 }
 
 const SEOHead: React.FC<SEOHeadProps> = ({
-  title = 'Capryos - Crypto & Business Made Simple',
-  description = 'Simplifying crypto, entrepreneurship, and financial knowledge for the next generation of builders.',
-  keywords = 'crypto, cryptocurrency, business, entrepreneurship, DeFi, blockchain, startup, investing',
+  title = 'Capryos - An Indie Blog on Crypto & Tech',
+  description = 'An independent hobby blog with personal notes and news about cryptocurrency and other tech products.',
+  keywords = 'crypto blog, cryptocurrency, tech blog, tech news, tech products, blockchain, indie blog',
   image = '/og-image.jpg',
   url = siteUrl,
   type = 'website',

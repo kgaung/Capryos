@@ -163,7 +163,7 @@ const Contact: React.FC = () => {
                     <option value="collaboration">Collaboration</option>
                     <option value="media">Media & Press</option>
                     <option value="support">Support</option>
-                    <option value="business">Business Opportunity</option>
+                    <option value="business">Collaboration</option>
                   </select>
                 </div>
 
@@ -248,7 +248,7 @@ const Contact: React.FC = () => {
               <div className="space-y-3 text-sm text-gray-700 dark:text-gray-300">
                 <div>
                   <p className="font-medium">Response time</p>
-                  <p>We typically reply within 24 hours on business days.</p>
+                  <p>I usually reply within a few days.</p>
                 </div>
                 <div>
                   <p className="font-medium">Collaboration</p>

@@ -17,7 +17,7 @@ const Footer: React.FC = () => {
               <span className="text-2xl font-bold">Capryos</span>
             </div>
             <p className="text-gray-400 text-sm leading-relaxed">
-              Simplifying crypto, entrepreneurship, and financial knowledge for the next generation of builders.
+              An independent hobby website about cryptocurrency, tech products, and news. Not a crypto business, and nothing here is financial advice.
             </p>
           </div>
 
@@ -76,7 +76,7 @@ const Footer: React.FC = () => {
             <Link to="/terms" className="text-gray-400 hover:text-white transition-colors duration-200">Terms of Service</Link>
           </div>
           <p className="text-gray-400 text-sm">
-            © 2026 Capryos. All rights reserved. Built with passion for the future of finance.
+            © 2026 Capryos. All rights reserved. An indie blog about crypto &amp; tech.
           </p>
         </div>
       </div>
