@@ -69,7 +69,7 @@ const Blog: React.FC = () => {
       <div className="py-20">
         <SEOHead
           title="Blog - Capryos"
-          description="Read the latest insights on crypto, business strategies, and entrepreneurship from the Capryos team."
+          description="Personal blog posts about cryptocurrency, tech products, and tech news from Capryos, an independent hobby blog."
         />
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center space-y-4">
@@ -85,8 +85,8 @@ const Blog: React.FC = () => {
     <div className="py-20">
       <SEOHead
         title="Blog - Capryos"
-        description="Read the latest insights on crypto, business strategies, and entrepreneurship from the Capryos team."
-        keywords="crypto blog, business blog, entrepreneurship articles, DeFi guides, startup advice"
+        description="Personal blog posts about cryptocurrency, tech products, and tech news from Capryos, an independent hobby blog."
+        keywords="crypto blog, tech blog, tech news, cryptocurrency, indie blog"
         url="https://capryos.com/blog"
       />
       
@@ -97,8 +97,8 @@ const Blog: React.FC = () => {
           <h1 className="text-4xl sm:text-5xl font-bold">Capryos Blog</h1>
           <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
             {posts.length > 0 
-              ? `${posts.length} articles on crypto, business strategies, and entrepreneurship. Learn from real experiences and practical case studies.`
-              : 'Deep insights into crypto, business strategies, and entrepreneurship coming soon.'
+              ? `${posts.length} ${posts.length === 1 ? 'post' : 'posts'} about cryptocurrency, tech products, and tech news. Personal opinions and notes, not financial advice.`
+              : 'Posts about cryptocurrency, tech products, and tech news are coming soon.'
             }
           </p>
         </div>
@@ -159,7 +159,7 @@ const Blog: React.FC = () => {
                 <p className="text-gray-600 dark:text-gray-400 mb-8">
                   {searchTerm || selectedTag 
                     ? 'Try adjusting your search or filter criteria.'
-                    : 'We\'re working on fresh content to help you navigate crypto and business.'
+                    : 'New posts about crypto and tech are on the way.'
                   }
                 </p>
                 {(searchTerm || selectedTag) && (
